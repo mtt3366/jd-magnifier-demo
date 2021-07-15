@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .magnifier {
+            margin: 20px auto;
+            width: 500px;
+            display: flex;
+            justify-content: flex-start;
+            align-items:start;
+        }
+
+        .magnifier .abbre {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border: 1px solid red;
+        }
+
+        .magnifier .abbre img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .magnifier .abbre .mark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, .4);
+            cursor: move;
+            display: none;
+        }
+
+        .magnifier .detail {
+            position: relative;
+            box-sizing: border-box;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            display:none;
+        }
+
+        .magnifier .detail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+
+    </style>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<section class="magnifier">
+    <!--缩略图-->
+    <div class="abbre">
+        <img src=" images/1.jpg" alt="">
+        <!-- MARK遮罩层-->
+        <div class="mark"></div>
+    </div>
+    <!--详情图-->
+    <div class="detail">
+        <img src="images/2.jpg" alt="">
+    </div>
+</section>
+
+<script>
+
+    let $magnifier = $('.magnifier'),
+        $abbre = $magnifier.find('.abbre'),
+        $mark = $abbre.find('.mark'),
+        $detail = $magnifier.find('.detail'),
+        $detailIMG = $detail.find('img');
+
+
+    //动态计算出大图的大小
+    let abbreW = $abbre.width(),
+        abbreH = $abbre.height(),
+        abbreOffset = $abbre.offset(),
+        markW = $mark. width(),
+        markH = $mark. height(),
+        detailW = $detail.width(),
+        detailH = $detail.height(),
+        detailIMGW = 0,
+        detailIMGH = 0;
+    detailIMGW = detailW / (markW / abbreW);
+    detailIMGH = detailH / (markH / abbreH) ;
+    $detailIMG.css({
+        width: detailIMGW,
+        height: detailIMGH
+    });
+
+        //计算"MARK/大图”移动的位置
+    const computed = function computed(ev) {
+        let curL = ev. pageX - abbreOffset.left - markW / 2,
+            curT = ev. pageY - abbreOffset.top - markH / 2;
+        //边界处理
+        let minL = 0,
+            minT = 0,
+            maxL = abbreW - markW,
+            maxT = abbreH - markH;
+        curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
+        curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
+        $mark.css({
+            left: curL,
+            top: curT
+        });
+        $detailIMG.css({
+            left: -curL / abbreW * detailIMGW,
+            top: -curT / abbreH * detailIMGH
+        });
+
+    };
+    //事件触发
+    $abbre.mouseenter( function (ev) {
+        $mark.show()
+        $detail.show()
+        computed(ev);
+    }).mousemove(function (ev) {
+        computed(ev);
+    }).mouseleave( function (ev) {
+        $mark.hide();
+        $mark.hide();
+    })
+
+
+</script>
+</body>
+</html>
