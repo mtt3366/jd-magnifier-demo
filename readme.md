@@ -1,4 +1,5 @@
 # 京东放大镜demo
+[GithubPage演示](https://mtt3366.github.io/jd-magnifier-demo/index.html)
 核心代码:
 ```js
 let $magnifier = $('.magnifier'),
